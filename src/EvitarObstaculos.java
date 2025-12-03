@@ -10,7 +10,6 @@ public class EvitarObstaculos extends Tarefa {
     private Dados dados;
     private MyRobotSync robot;
     private Random random;
-    private boolean aEvitar = false;
 
     public EvitarObstaculos(Dados dados) {
         this.dados = dados;
@@ -20,35 +19,34 @@ public class EvitarObstaculos extends Tarefa {
 
     @Override
     void trabalharAtividade() throws InterruptedException {
-        // se já estiver a evitar
-        if (aEvitar) {
-            // aguardar novo ciclo
-            Thread.sleep(50);
-            return;
+        int toque;
+
+        try {
+            dados.getRobot().entrar();
+            toque = robot.SensorToque(RobotLegoEV3.S_1);
+        } finally {
+            dados.getRobot().sair();
         }
-
-
-        int toque = robot.SensorToque(RobotLegoEV3.S_1);
         switch (toque) {
             case 0:
                 Thread.sleep(50);
                 break;
             case 1:
-                aEvitar = true;
-                dados.getRobot().Parar(true); // parar imediatamente
                 dados.getGui().print("Evitar Obstáculos: Obstáculo Detectado");
-                try {
-                    // se os mov aleatorios estiverem ATIVOS e a FUNCIONAR
-                    if (dados.getMovAleatorios() != null && dados.getMovAleatorios().estado == Estados.TRABALHAR) {
-                        dados.getGui().print("Evitar Obstáculos: Interromper Movimentos Aleatórios");
-                        dados.getMovAleatorios().interrupt(); // interromper
-                    }
+                // se os mov aleatorios estiverem ATIVOS e a FUNCIONAR
+                if (dados.getMovAleatorios() != null && dados.getMovAleatorios().estado == Estados.TRABALHAR) {
+                    dados.getGui().print("Evitar Obstáculos: Interromper Movimentos Aleatórios");
+                    dados.getMovAleatorios().interrupt(); // interromper
+                }
 
-                    dados.getGui().print("Evitar Obstáculos: Iniciados");
+                try {
                     dados.getRobot().entrar();
                     dados.getGui().print("Evitar Obstáculos: Semáforo adquirido");
-                    Thread.sleep(TempoMovimento.getTempoComunicacao());
+
+                    dados.getRobot().Parar(true);
                     dados.getGui().print("Evitar Obstaculos: Parar.");
+
+                    Thread.sleep(TempoMovimento.getTempoComunicacao());
 
                     // reta
                     int distancia = -20;
@@ -77,13 +75,12 @@ public class EvitarObstaculos extends Tarefa {
                             break;
 
                     }
+                    dados.getRobot().Parar(false);
                     break;
 
                 } finally {
-                    dados.getRobot().Parar(false);
                     dados.getRobot().sair();
                     dados.getGui().print("Evitar Obstáculos: Semaforo Liberado");
-                    aEvitar = false;
                 }
 
 
@@ -91,6 +88,7 @@ public class EvitarObstaculos extends Tarefa {
 
         Thread.sleep(50);
     }
+
     private int random() {
         return random.nextInt(2);
     }
