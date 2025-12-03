@@ -48,7 +48,7 @@ public class EvitarObstaculos extends Tarefa {
                     dados.getRobot().entrar();
                     dados.getGui().print("Evitar Obstáculos: Semáforo adquirido");
                     Thread.sleep(TempoMovimento.getTempoComunicacao());
-                    dados.getGui().print("Evitar Obstaculos: Parar.")   ;
+                    dados.getGui().print("Evitar Obstaculos: Parar.");
 
                     // reta
                     int distancia = -20;
@@ -83,6 +83,7 @@ public class EvitarObstaculos extends Tarefa {
                     dados.getRobot().Parar(false);
                     dados.getRobot().sair();
                     dados.getGui().print("Evitar Obstáculos: Semaforo Liberado");
+                    aEvitar = false;
                 }
 
 
@@ -90,7 +91,6 @@ public class EvitarObstaculos extends Tarefa {
 
         Thread.sleep(50);
     }
-
     private int random() {
         return random.nextInt(2);
     }
