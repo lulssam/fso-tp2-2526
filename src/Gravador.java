@@ -10,13 +10,13 @@ public class Gravador extends Tarefa {
     private Dados dados;
 
     // gravação
-    private boolean gravar;
+    private volatile boolean gravar;
     private String caminhoGravar;
     private OutputStream os;
     private Writer writer;
 
     // reprodução
-    private boolean reproduzir = false;
+    private volatile boolean reproduzir = false;
     private String caminhoReproduzir;
 
     public Gravador(Dados dados) {
@@ -65,22 +65,23 @@ public class Gravador extends Tarefa {
 
     }
 
-    public void gravar(Comando comando) {
-        Writer w;
-        synchronized (this) {
-            w = this.writer;
+    public synchronized void pararReproducao() {
+        if (!reproduzir) {
+            dados.getGui().print("Gravador: não está a reproduzir");
+            return;
         }
-        if (!gravar || w == null || comando == null) return;
+        fecharWritter();
+        reproduzir = false;
+        dados.getGui().print("Gravador: reproduzir acabado");
+    }
 
+    public synchronized void gravar(Comando comando) {
+        if (!gravar || writer == null || comando == null) return;
         try {
             String linha = encode(comando);
-            synchronized (this) {
-                if (writer != null) {
-                    writer.write(linha);
-                    writer.write("\n");
-                    writer.flush();
-                }
-            }
+            writer.write(linha);
+            writer.write("\n");
+            writer.flush();
         } catch (IOException e) {
             dados.getGui().print("Gravador: erro a escrever comando: " + e.getMessage());
         }
@@ -170,33 +171,24 @@ public class Gravador extends Tarefa {
              Reader ir = new InputStreamReader(is, "UTF-8");
              BufferedReader br = new BufferedReader(ir)) {
 
-            try {
-                dados.getRobot().entrar();
+            dados.getGui().print("Gravador: Semáforo adquirido");
 
-                dados.getGui().print("Gravador: Semáforo adquirido");
+            String linha;
+            while ((linha = br.readLine()) != null && estado == Estados.TRABALHAR) {
+                linha = linha.trim();
+                if (linha.isEmpty()) continue;
 
-                String linha;
-                while ((linha = br.readLine()) != null && estado == Estados.TRABALHAR) {
-                    linha = linha.trim();
-                    if (linha.isEmpty()) continue;
-
-                    Comando comando = decode(linha);
-                    if (comando == null) {
-                        dados.getGui().print("Gravador: linha inválida: " + linha);
-                        continue;
-                    }
-                    executarComando(comando);
+                Comando comando = decode(linha);
+                if (comando == null) {
+                    dados.getGui().print("Gravador: linha inválida: " + linha);
+                    continue;
                 }
-
-                // no fim parar de forma não imediata para acabar a sequência
-                dados.getGui().print("Gravador: Parar(false)");
-                dados.getRobot().Parar(false);
-            } finally {
-                // liberar semaforo
-                dados.getRobot().sair();
-                dados.getGui().print("Gravador: Semáforo liberado");
-
+                executarComando(comando);
             }
+
+            // no fim parar de forma não imediata para acabar a sequência
+            dados.getGui().print("Gravador: Parar(false)");
+            dados.getRobot().Parar(false);
             dados.getGui().print("Gravador: reprodução concluída");
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

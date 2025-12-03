@@ -1,4 +1,5 @@
-import java.util.concurrent.Semaphore;
+import java.util. concurrent. Semaphore;
+
 public class MyRobotSync implements IRobotLegoEV3 {
     private Semaphore acesso;
     private MyRobotLegoEV3 robot;
@@ -6,6 +7,7 @@ public class MyRobotSync implements IRobotLegoEV3 {
     public MyRobotSync() {
         acesso = new Semaphore(1);
         robot = new MyRobotLegoEV3();
+        robot.setSemaphore(acesso);
     }
 
     @Override
@@ -15,7 +17,7 @@ public class MyRobotSync implements IRobotLegoEV3 {
 
     @Override
     public void CloseEV3() {
-        robot.CloseEV3();
+        robot. CloseEV3();
     }
 
     @Override
@@ -48,7 +50,7 @@ public class MyRobotSync implements IRobotLegoEV3 {
     }
 
     public void setRobot(IRobotLegoEV3 robot) {
-        this.robot.setRobot(robot);
+        this.robot. setRobot(robot);
     }
 
     public void entrar() throws InterruptedException {
@@ -59,11 +61,11 @@ public class MyRobotSync implements IRobotLegoEV3 {
         acesso.release();
     }
 
-    public void start(){
+    public void start() {
         robot.start();
     }
 
-    public void stop(){
+    public void stop() {
         robot.interrupt();
     }
 }

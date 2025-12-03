@@ -27,11 +27,13 @@ public class MovAleatorios extends Tarefa {
         }
 
         dados.getGui().print("Movimentos Aleatorios: novo lote de " + num + " comandos.");
+        boolean interrompido = false;
 
         for (int i = 0; i < num && estado == Estados.TRABALHAR; i++) {
             // verificação antes de cada comando
             if (Thread.interrupted()) {
                 dados.getGui().print("Movimentos Aleatorios: interrupção antes do comando " + (i + 1));
+                interrompido = true;
                 estado = Estados.DORMIR;
                 break;
             }
@@ -48,6 +50,7 @@ public class MovAleatorios extends Tarefa {
                     dados.getRobot().entrar();
                     try {
                         dados.getRobot().Reta(distancia);
+                        dados.registrarComandos(new Comando(Comando.ID_DIREITA, distancia));
                     } finally {
                         dados.getRobot().sair();
                     }
@@ -61,6 +64,7 @@ public class MovAleatorios extends Tarefa {
                     dados.getRobot().entrar();
                     try {
                         dados.getRobot().CurvarDireita(raio, angulo);
+                        dados.registrarComandos(new Comando(Comando.ID_DIREITA, raio, angulo));
                     } finally {
                         dados.getRobot().sair();
                     }
@@ -74,6 +78,7 @@ public class MovAleatorios extends Tarefa {
                     dados.getRobot().entrar();
                     try {
                         dados.getRobot().CurvarEsquerda(raio, angulo);
+                        dados.registrarComandos(new Comando(Comando.ID_ESQUERDA, raio, angulo));
                     } finally {
                         dados.getRobot().sair();
                     }
@@ -89,16 +94,19 @@ public class MovAleatorios extends Tarefa {
                 Thread.sleep(tempo);
             } catch (InterruptedException e) {
                 dados.getGui().print("Movimentos Aleatorios: comando interrompido durante espera");
-                Thread.interrupted();
+                interrompido = true;
                 break;
             }
         }
 
-        dados.getRobot().Parar(false);
-        dados.getGui().print("Movimentos Aleatorios: lote concluído. Próximo lote irá iniciar se ainda ativo.");
+        if (!interrompido) {
+        //dados.getRobot().Parar(false);
+        dados.getGui().print("Movimentos Aleatorios: lote concluído.");
 
-        if (Thread.interrupted()) {
-            dados.getGui().print("Movimentos Aleatorios: interrupção pós-lote");
+        } else {
+            dados.getGui().print("Movimentos Aleatorios: lote interrompido");
+        }
+        if (interrompido) {
             Thread.interrupted();
         }
 

@@ -20,7 +20,6 @@ public class EvitarObstaculos extends Tarefa {
     @Override
     void trabalharAtividade() throws InterruptedException {
         int toque;
-
         try {
             dados.getRobot().entrar();
             toque = robot.SensorToque(RobotLegoEV3.S_1);
@@ -32,18 +31,19 @@ public class EvitarObstaculos extends Tarefa {
                 Thread.sleep(50);
                 break;
             case 1:
-                dados.getGui().print("Evitar Obstáculos: Obstáculo Detectado");
-                // se os mov aleatorios estiverem ATIVOS e a FUNCIONAR
-                if (dados.getMovAleatorios() != null && dados.getMovAleatorios().estado == Estados.TRABALHAR) {
-                    dados.getGui().print("Evitar Obstáculos: Interromper Movimentos Aleatórios");
-                    dados.getMovAleatorios().interrupt(); // interromper
-                }
 
+                dados.getGui().print("Evitar Obstáculos: Obstáculo Detectado");
+
+                    // se os mov aleatorios estiverem ATIVOS e a FUNCIONAR
+                    if (dados.getMovAleatorios() != null && dados.getMovAleatorios().estado == Estados.TRABALHAR) {
+                        dados.getGui().print("Evitar Obstáculos: Interromper Movimentos Aleatórios");
+                        dados.getMovAleatorios().interrupt(); // interromper
+                    }
                 try {
                     dados.getRobot().entrar();
                     dados.getGui().print("Evitar Obstáculos: Semáforo adquirido");
 
-                    dados.getRobot().Parar(true);
+                    dados.getRobot().Parar(true); // parar imediatamente
                     dados.getGui().print("Evitar Obstaculos: Parar.");
 
                     Thread.sleep(TempoMovimento.getTempoComunicacao());
@@ -88,7 +88,6 @@ public class EvitarObstaculos extends Tarefa {
 
         Thread.sleep(50);
     }
-
     private int random() {
         return random.nextInt(2);
     }

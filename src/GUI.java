@@ -292,7 +292,7 @@ public class GUI extends JFrame {
 
                 if (!dados.getGravador().isGravar()) {
                     dados.getGravador().iniciarGravar(caminho);
-                    gravarBtn.setText("Parar Gravação");
+                    gravarBtn.setText("Parar");
                 } else {
                     dados.getGravador().pararGravacao();
                     gravarBtn.setText("Gravar");
@@ -320,8 +320,15 @@ public class GUI extends JFrame {
                     dados.getGravador().pararGravacao();
                     gravarBtn.setText("Gravar");
                 }
-                dados.getGravador().reproduzir(caminho);
-                print("Reproduzir");
+
+                if (!dados.getGravador().isReproduzir()) {
+                    dados.getGravador().reproduzir(caminho);
+                    reproduzirBtn.setText("Parar");
+                    print("Reproduzir");
+                } else {
+                    dados.getGravador().pararReproducao();
+                    reproduzirBtn.setText("Reproduzir");
+                }
             }
         });
         reproduzirBtn.setBounds(230, 50, 117, 29);
@@ -377,6 +384,7 @@ public class GUI extends JFrame {
         });
         imprimirChkBox.setBounds(250, 542, 100, 23);
         contentPane.add(imprimirChkBox);
+
 
         setVisible(true);
     }

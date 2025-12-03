@@ -1,3 +1,5 @@
+import java.util.concurrent.Semaphore;
+
 /**
  * Classe servidor do RobotLegoEV3
  * CONSUMIDOR!!
@@ -9,6 +11,7 @@ public class MyRobotLegoEV3 extends Thread implements IRobotLegoEV3 {
     private BufferCircularComando buffer;
     private IRobotLegoEV3 robot;
     private volatile boolean stopRequested = false;
+    private Semaphore semaphore;
 
     public MyRobotLegoEV3() {
         robot = new CRobotLegoEV3();
@@ -72,6 +75,10 @@ public class MyRobotLegoEV3 extends Thread implements IRobotLegoEV3 {
         }
     }
 
+    public void setSemaphore(Semaphore s) {
+        this.semaphore = s;
+    }
+
     /**
      * Ler do comando, enviar para o robot, e esperar pelo tempo de execução de forma
      * interrompível para permitir PARAR imediato.
@@ -84,13 +91,28 @@ public class MyRobotLegoEV3 extends Thread implements IRobotLegoEV3 {
                 continue;
             }
             try {
-                long t = comando.executarComandos(robot);
+                if (semaphore != null) {
+                    semaphore.acquire();
+                }
+                long t = 0;
+                try {
+                    t = comando.executarComandos(robot);
+                } finally {
+                    if (semaphore != null) semaphore.release();
+                }
                 if (t > 0) Thread.sleep(t);
             } catch (InterruptedException e) {
                 pararImediatamente();
             }
         }
-        robot.Parar(true);
+        try {
+            if (semaphore != null) semaphore.acquire();
+            robot.Parar(true);
+        } catch (InterruptedException e) {
+
+        } finally {
+            if (semaphore != null) semaphore.release();
+        }
     }
 
     public IRobotLegoEV3 getRobot() {
