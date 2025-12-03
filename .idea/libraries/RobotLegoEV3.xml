@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="RobotLegoEV3">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../bibliotecas/RobotLegoEV3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../bibliotecas/bluecove-2.1.1-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
