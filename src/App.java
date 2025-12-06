@@ -6,19 +6,16 @@ import javax.swing.*;
 public class App implements Runnable {
     private GUI gui;
     private Dados dados;
-    public App() {
-        SwingUtilities.invokeLater(this);
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new App());
+    }
+
+    public void run() {
         gui = new GUI();
         dados = new Dados(gui);
         gui.setDados(dados);
         gui.setVisible(true);
-    }
-    public static void main(String[] args) {
-        App app = new App();
-        new Thread(app).start();
-    }
-    public void run(){
-
     }
 }
 

@@ -14,7 +14,7 @@ public class MyRobotLegoEV3 extends Thread implements IRobotLegoEV3 {
     private Semaphore semaphore;
 
     public MyRobotLegoEV3() {
-        robot = new CRobotLegoEV3();
+        robot = new RobotSimulado();
         buffer = new BufferCircularComando();
     }
 
@@ -94,7 +94,7 @@ public class MyRobotLegoEV3 extends Thread implements IRobotLegoEV3 {
                 if (semaphore != null) {
                     semaphore.acquire();
                 }
-                long t = 0;
+                long t;
                 try {
                     t = comando.executarComandos(robot);
                 } finally {

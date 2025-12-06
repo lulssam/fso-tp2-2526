@@ -1,8 +1,11 @@
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class GUI extends JFrame {
 
@@ -39,7 +42,7 @@ public class GUI extends JFrame {
 
         // Iniciar Janela
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 467, 610);
+        setBounds(100, 100, 470, 610);
         contentPane = new JPanel();
         contentPane.setBackground(new Color(254, 255, 255));
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -342,6 +345,8 @@ public class GUI extends JFrame {
         consolaScrollPane.setBounds(6, 300, 455, 230);
         contentPane.add(consolaScrollPane);
         consolaTextArea = new JTextArea();
+        DefaultCaret caret = (DefaultCaret) consolaTextArea.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         consolaScrollPane.setViewportView(consolaTextArea);
 
 
@@ -385,6 +390,49 @@ public class GUI extends JFrame {
         imprimirChkBox.setBounds(250, 542, 100, 23);
         contentPane.add(imprimirChkBox);
 
+        // se fecharmos a janela o robot TEM que parar
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                try {
+                    if (dados != null) {
+                        try {
+                            dados.getRobot().Parar(true);
+                        } catch (Exception ignore) {
+                        }
+                        try {
+                            dados.getRobot().stop();
+                        } catch (Exception ignore) {
+                        }
+                        try {
+                            dados.getRobot().CloseEV3();
+                        } catch (Exception igore) {
+
+                        }
+                        try {
+                            dados.getMovAleatorios().desativar();
+                            dados.getMovAleatorios().interrupt();
+                        } catch (Exception ignore) {
+                        }
+                        try {
+                            dados.getEvitarObstaculos().desativar();
+                            dados.getEvitarObstaculos().interrupt();
+                        } catch (Exception ignore) {
+
+                        }
+                        try {
+                            dados.getGravador().desativar();
+                            dados.getGravador().interrupt();
+                        } catch (Exception ignore) {
+
+                        }
+                    }
+                } finally {
+                    System.exit(0);
+                }
+            }
+        });
 
         setVisible(true);
     }
