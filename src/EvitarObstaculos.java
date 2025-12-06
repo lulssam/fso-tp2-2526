@@ -7,6 +7,7 @@ import java.util.Random;
  * Durante estas ações nem o utilizador nem as outras tarefas devem poder movimentar o robot.
  */
 public class EvitarObstaculos extends Tarefa {
+    private final int ESPERA_SENSOR = 50;
     private Dados dados;
     private MyRobotSync robot;
     private Random random;
@@ -28,17 +29,17 @@ public class EvitarObstaculos extends Tarefa {
         }
         switch (toque) {
             case 0:
-                Thread.sleep(50);
+                Thread.sleep(ESPERA_SENSOR);
                 break;
             case 1:
 
                 dados.getGui().print("Evitar Obstáculos: Obstáculo Detectado");
 
-                    // se os mov aleatorios estiverem ATIVOS e a FUNCIONAR
-                    if (dados.getMovAleatorios() != null && dados.getMovAleatorios().estado == Estados.TRABALHAR) {
-                        dados.getGui().print("Evitar Obstáculos: Interromper Movimentos Aleatórios");
-                        dados.getMovAleatorios().interrupt(); // interromper
-                    }
+                // se os mov aleatorios estiverem ATIVOS e a FUNCIONAR
+                if (dados.getMovAleatorios() != null && dados.getMovAleatorios().estado == Estados.TRABALHAR) {
+                    dados.getGui().print("Evitar Obstáculos: Interromper Movimentos Aleatórios");
+                    dados.getMovAleatorios().interrupt(); // interromper
+                }
                 try {
                     dados.getRobot().entrar();
                     dados.getGui().print("Evitar Obstáculos: Semáforo adquirido");
@@ -86,8 +87,9 @@ public class EvitarObstaculos extends Tarefa {
 
         }
 
-        Thread.sleep(50);
+        Thread.sleep(ESPERA_SENSOR);
     }
+
     private int random() {
         return random.nextInt(2);
     }

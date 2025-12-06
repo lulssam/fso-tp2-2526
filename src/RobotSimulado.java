@@ -1,7 +1,6 @@
 public class RobotSimulado implements IRobotLegoEV3 {
     public RobotSimulado() {
     }
-
     @Override
     public boolean OpenEV3(String s) {
         try {

@@ -66,13 +66,14 @@ public class Gravador extends Tarefa {
     }
 
     public synchronized void pararReproducao() {
-        if (!reproduzir) {
-            dados.getGui().print("Gravador: não está a reproduzir");
-            return;
-        }
-        fecharWritter();
         reproduzir = false;
-        dados.getGui().print("Gravador: reproduzir acabado");
+        estado = Estados.DORMIR;
+        this.interrupt();
+        try {
+            dados.getRobot().Parar(true);
+        } catch (Exception ignore) {
+        }
+        dados.getGui().print("Gravador: reproduzir parado");
     }
 
     public synchronized void gravar(Comando comando) {
@@ -174,7 +175,10 @@ public class Gravador extends Tarefa {
             dados.getGui().print("Gravador: Semáforo adquirido");
 
             String linha;
-            while ((linha = br.readLine()) != null && estado == Estados.TRABALHAR) {
+            while ((linha = br.readLine()) != null && estado == Estados.TRABALHAR && reproduzir) {
+
+                if (Thread.interrupted()) break;
+
                 linha = linha.trim();
                 if (linha.isEmpty()) continue;
 

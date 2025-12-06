@@ -451,8 +451,16 @@ public class GUI extends JFrame {
     }
 
     public void print(String s) {
-        if (imprimirChkBox == null || imprimirChkBox.isSelected()) {
-            consolaTextArea.append(s + "\n");
+        if (imprimirChkBox == null) return;
+        Runnable runnable = () -> {
+            if (imprimirChkBox.isSelected()) {
+                consolaTextArea.append(s + "\n");
+            }
+        };
+        if (SwingUtilities.isEventDispatchThread()) {
+            runnable.run();
+        } else {
+            SwingUtilities.invokeLater(runnable);
         }
     }
 
