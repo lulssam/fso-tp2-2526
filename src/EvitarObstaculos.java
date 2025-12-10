@@ -8,11 +8,11 @@ import java.util.Random;
  */
 public class EvitarObstaculos extends Tarefa {
     private final int ESPERA_SENSOR = 50;
-    private Dados dados;
+    private DadosAppInterface dados;
     private MyRobotSync robot;
     private Random random;
 
-    public EvitarObstaculos(Dados dados) {
+    public EvitarObstaculos(DadosAppInterface dados) {
         this.dados = dados;
         random = new Random();
         robot = dados.getRobot();
@@ -33,19 +33,19 @@ public class EvitarObstaculos extends Tarefa {
                 break;
             case 1:
 
-                dados.getGui().print("Evitar Obstáculos: Obstáculo Detectado");
+                dados.print("Evitar Obstáculos: Obstáculo Detectado");
 
                 // se os mov aleatorios estiverem ATIVOS e a FUNCIONAR
                 if (dados.getMovAleatorios() != null && dados.getMovAleatorios().estado == Estados.TRABALHAR) {
-                    dados.getGui().print("Evitar Obstáculos: Interromper Movimentos Aleatórios");
+                    dados.print("Evitar Obstáculos: Interromper Movimentos Aleatórios");
                     dados.getMovAleatorios().interrupt(); // interromper
                 }
                 try {
                     dados.getRobot().entrar();
-                    dados.getGui().print("Evitar Obstáculos: Semáforo adquirido");
+                    dados.print("Evitar Obstáculos: Semáforo adquirido");
 
                     dados.getRobot().Parar(true); // parar imediatamente
-                    dados.getGui().print("Evitar Obstaculos: Parar.");
+                    dados.print("Evitar Obstaculos: Parar.");
 
                     Thread.sleep(TempoMovimento.getTempoComunicacao());
 
@@ -53,7 +53,7 @@ public class EvitarObstaculos extends Tarefa {
                     int distancia = -20;
                     dados.getRobot().Reta(distancia);
                     dados.registrarComandos(new Comando(Comando.ID_RETA, distancia));
-                    dados.getGui().print("Evitar Obstáculos: Reta com distância: " + distancia);
+                    dados.print("Evitar Obstáculos: Reta com distância: " + distancia);
                     Thread.sleep(TempoMovimento.tempoReta(distancia));
 
                     int escolha = random();
@@ -63,14 +63,14 @@ public class EvitarObstaculos extends Tarefa {
                         case 0:
                             dados.getRobot().CurvarEsquerda(0, 90);
                             dados.registrarComandos(new Comando(Comando.ID_ESQUERDA, 0, 90));
-                            dados.getGui().print("Evitar Obstáculos: Curva Esquerda com raio: 0, e angulo: 90º. ");
+                            dados.print("Evitar Obstáculos: Curva Esquerda com raio: 0, e angulo: 90º. ");
                             Thread.sleep(TempoMovimento.tempoCurvar(0, 90));
 
                             break;
                         case 1:
                             dados.getRobot().CurvarDireita(0, 90);
                             dados.registrarComandos(new Comando(Comando.ID_DIREITA, 0, 90));
-                            dados.getGui().print("Evitar Obstáculos: Curva Direita com raio: 0, e angulo: 90º. ");
+                            dados.print("Evitar Obstáculos: Curva Direita com raio: 0, e angulo: 90º. ");
                             Thread.sleep(TempoMovimento.tempoCurvar(0, 90));
 
                             break;
@@ -81,7 +81,7 @@ public class EvitarObstaculos extends Tarefa {
 
                 } finally {
                     dados.getRobot().sair();
-                    dados.getGui().print("Evitar Obstáculos: Semaforo Liberado");
+                    dados.print("Evitar Obstáculos: Semaforo Liberado");
                 }
 
 

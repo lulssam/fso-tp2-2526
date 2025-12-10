@@ -1,21 +1,24 @@
-import java.util.ArrayList;
+import javax.swing.*;
 
-public class Dados {
+/**
+ * Dados legacy - mantido para compatibilidade mas não usado nas novas GUIs.
+ * Use DadosApp ou DadosGravador ao invés.
+ */
+public class Dados implements DadosAppInterface, DadosGravadorInterface {
     private String nomeRobot;
-    private GUI gui;
-    private ArrayList<String> texto;
+    private ConsolaPrinter consolaPrinter;
     private int raio, angulo, distancia;
     private boolean onOff;
-    private MyRobotSync robot; // MUDAR PARA ROBOTSYNC
+    private MyRobotSync robot;
+    private JSpinner numSpinner;
 
     private EvitarObstaculos evitarObstaculos;
     private MovAleatorios movAleatorios;
     private Gravador gravador;
 
-    public Dados(GUI gui) {
+    public Dados(ConsolaPrinter consolaPrinter) {
         nomeRobot = "EV8";
-        this.gui = gui;
-        texto = new ArrayList<String>();
+        this.consolaPrinter = consolaPrinter;
         raio = 20;
         angulo = 90;
         distancia = 33;
@@ -51,20 +54,14 @@ public class Dados {
         this.nomeRobot = nomeRobot;
     }
 
-    public GUI getGui() {
-        return gui;
+    public ConsolaPrinter getConsolaPrinter() {
+        return consolaPrinter;
     }
 
-    public void setGui(GUI gui) {
-        this.gui = gui;
-    }
-
-    public ArrayList<String> getTexto() {
-        return texto;
-    }
-
-    public void setTexto(ArrayList<String> texto) {
-        this.texto = texto;
+    public void print(String mensagem) {
+        if (consolaPrinter != null) {
+            consolaPrinter.print(mensagem);
+        }
     }
 
     public int getRaio() {
@@ -113,6 +110,14 @@ public class Dados {
 
     public void setGravador(Gravador gravador) {
         this.gravador = gravador;
+    }
+
+    public JSpinner getNumSpinner() {
+        return numSpinner;
+    }
+
+    public void setNumSpinner(JSpinner numSpinner) {
+        this.numSpinner = numSpinner;
     }
 
     /**

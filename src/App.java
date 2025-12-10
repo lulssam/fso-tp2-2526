@@ -1,20 +1,18 @@
 import javax.swing.*;
 
-// TODO 3. meter a funcionar com outro robot
-
 public class App implements Runnable {
-    private GUI gui;
-    private Dados dados;
+    private GUIApp gui;
+    private DadosApp dados;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new App());
     }
 
     public void run() {
-        gui = new GUI();
-        dados = new Dados(gui);
+        gui = new GUIApp();
+        dados = new DadosApp(gui, gui.getNumSpinner());
         gui.setDados(dados);
-        gui.setVisible(true);
     }
 }
+
 

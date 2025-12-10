@@ -2,37 +2,37 @@ import java.util.Random;
 
 public class MovAleatorios extends Tarefa {
 
-    private final Dados dados;
+    private final DadosAppInterface dados;
     private final Random random = new Random();
 
-    public MovAleatorios(Dados dados) {
+    public MovAleatorios(DadosAppInterface dados) {
         this.dados = dados;
     }
 
     @Override
     void trabalharAtividade() throws InterruptedException {
-        dados.getGui().print("Movimentos Aleatorios: Iniciado.");
+        dados.print("Movimentos Aleatorios: Iniciado.");
         int num;
         try {
-            num = (int) dados.getGui().getNumSpinner().getValue();
+            num = (int) dados.getNumSpinner().getValue();
         } catch (Exception e) {
             num = 0;
         }
 
         // tratamento de erros
         if (num <= 0) {
-            dados.getGui().print("Movimentos Aleatorios: número inválido (" + num + ")");
+            dados.print("Movimentos Aleatorios: número inválido (" + num + ")");
             estado = Estados.DORMIR;
             return;
         }
 
-        dados.getGui().print("Movimentos Aleatorios: novo lote de " + num + " comandos.");
+        dados.print("Movimentos Aleatorios: novo lote de " + num + " comandos.");
         boolean interrompido = false;
 
         for (int i = 0; i < num && estado == Estados.TRABALHAR; i++) {
             // verificação antes de cada comando
             if (Thread.interrupted()) {
-                dados.getGui().print("Movimentos Aleatorios: interrupção antes do comando " + (i + 1));
+                dados.print("Movimentos Aleatorios: interrupção antes do comando " + (i + 1));
                 interrompido = true;
                 estado = Estados.DORMIR;
                 break;
@@ -45,7 +45,7 @@ public class MovAleatorios extends Tarefa {
             switch (movimento) {
                 case 0: // RETA
                     distancia = randoms(10, 50);
-                    dados.getGui().print((i + 1) + ": Comando Aleatório: RETA " + distancia + " cm");
+                    dados.print((i + 1) + ": Comando Aleatório: RETA " + distancia + " cm");
                     // exclusão mútua por comando
                     dados.getRobot().entrar();
                     try {
@@ -60,7 +60,7 @@ public class MovAleatorios extends Tarefa {
                 case 1: // DIREITA
                     raio = randoms(10, 30);
                     angulo = randoms(20, 90);
-                    dados.getGui().print((i + 1) + ": Comando Aleatório DIREITA raio=" + raio + " ang=" + angulo);
+                    dados.print((i + 1) + ": Comando Aleatório DIREITA raio=" + raio + " ang=" + angulo);
                     dados.getRobot().entrar();
                     try {
                         dados.getRobot().CurvarDireita(raio, angulo);
@@ -74,7 +74,7 @@ public class MovAleatorios extends Tarefa {
                 case 2: // ESQUERDA
                     raio = randoms(10, 30);
                     angulo = randoms(20, 90);
-                    dados.getGui().print((i + 1) + ": Comando Aleatório ESQUERDA raio=" + raio + " ang=" + angulo);
+                    dados.print((i + 1) + ": Comando Aleatório ESQUERDA raio=" + raio + " ang=" + angulo);
                     dados.getRobot().entrar();
                     try {
                         dados.getRobot().CurvarEsquerda(raio, angulo);
@@ -89,11 +89,11 @@ public class MovAleatorios extends Tarefa {
                     tempo = 0;
             }
 
-            dados.getGui().print("Espera: " + tempo + " ms");
+            dados.print("Espera: " + tempo + " ms");
             try {
                 Thread.sleep(tempo);
             } catch (InterruptedException e) {
-                dados.getGui().print("Movimentos Aleatorios: comando interrompido durante espera");
+                dados.print("Movimentos Aleatorios: comando interrompido durante espera");
                 interrompido = true;
                 break;
             }
@@ -101,16 +101,16 @@ public class MovAleatorios extends Tarefa {
 
         if (!interrompido) {
         //dados.getRobot().Parar(false);
-        dados.getGui().print("Movimentos Aleatorios: lote concluído.");
+        dados.print("Movimentos Aleatorios: lote concluído.");
 
         } else {
-            dados.getGui().print("Movimentos Aleatorios: lote interrompido");
+            dados.print("Movimentos Aleatorios: lote interrompido");
         }
         if (interrompido) {
             Thread.interrupted();
         }
 
-        dados.getGui().print("Movimentos Aleatorios: desativado.");
+        dados.print("Movimentos Aleatorios: desativado.");
     }
 
     private int randoms(int min, int max) {
