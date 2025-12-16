@@ -50,7 +50,7 @@ public class MovAleatorios extends Tarefa {
                     dados.getRobot().entrar();
                     try {
                         dados.getRobot().Reta(distancia);
-                        dados.registrarComandos(new Comando(Comando.ID_DIREITA, distancia));
+                        dados.registarComandos(new Comando(Comando.ID_DIREITA, distancia));
                     } finally {
                         dados.getRobot().sair();
                     }
@@ -64,7 +64,7 @@ public class MovAleatorios extends Tarefa {
                     dados.getRobot().entrar();
                     try {
                         dados.getRobot().CurvarDireita(raio, angulo);
-                        dados.registrarComandos(new Comando(Comando.ID_DIREITA, raio, angulo));
+                        dados.registarComandos(new Comando(Comando.ID_DIREITA, raio, angulo));
                     } finally {
                         dados.getRobot().sair();
                     }
@@ -78,7 +78,7 @@ public class MovAleatorios extends Tarefa {
                     dados.getRobot().entrar();
                     try {
                         dados.getRobot().CurvarEsquerda(raio, angulo);
-                        dados.registrarComandos(new Comando(Comando.ID_ESQUERDA, raio, angulo));
+                        dados.registarComandos(new Comando(Comando.ID_ESQUERDA, raio, angulo));
                     } finally {
                         dados.getRobot().sair();
                     }

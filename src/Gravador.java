@@ -31,12 +31,12 @@ public class Gravador extends Tarefa {
     public synchronized void iniciarGravar(String caminhoFicheiro) {
         // se estiver a gravar
         if (gravar) {
-            dados.getGui().print("Gravador: Gravação ativa");
+            dados.getGuiGravador().print("Gravador: Gravação ativa");
             return;
         }
         // tratamento de erros
         if (caminhoFicheiro == null || caminhoFicheiro.trim().isEmpty()) {
-            dados.getGui().print("Gravador: Caminho do ficheiro inválido");
+            dados.getGuiGravador().print("Gravador: Caminho do ficheiro inválido");
             return;
         }
 
@@ -46,21 +46,21 @@ public class Gravador extends Tarefa {
             os = new FileOutputStream(caminhoGravar, false);
             writer = new OutputStreamWriter(os, "UTF-8");
             gravar = true;
-            dados.getGui().print("Gravador: gravação iniciada em " + caminhoGravar);
+            dados.getGuiGravador().print("Gravador: gravação iniciada em " + caminhoGravar);
         } catch (IOException e) {
-            dados.getGui().print("Gravador: erro a iniciar gravação: " + e.getMessage());
+            dados.getGuiGravador().print("Gravador: erro a iniciar gravação: " + e.getMessage());
             fecharWritter();
         }
     }
 
     public synchronized void pararGravacao() {
         if (!gravar) {
-            dados.getGui().print("Gravador: não está a gravar");
+            dados.getGuiGravador().print("Gravador: não está a gravar");
             return;
         }
         fecharWritter();
         gravar = false;
-        dados.getGui().print("Gravador: gravação acabada");
+        dados.getGuiGravador().print("Gravador: gravação acabada");
 
 
     }
@@ -73,7 +73,7 @@ public class Gravador extends Tarefa {
             dados.getRobot().Parar(true);
         } catch (Exception ignore) {
         }
-        dados.getGui().print("Gravador: reproduzir parado");
+        dados.getGuiGravador().print("Gravador: reproduzir parado");
     }
 
     public synchronized void gravar(Comando comando) {
@@ -84,18 +84,18 @@ public class Gravador extends Tarefa {
             writer.write("\n");
             writer.flush();
         } catch (IOException e) {
-            dados.getGui().print("Gravador: erro a escrever comando: " + e.getMessage());
+            dados.getGuiGravador().print("Gravador: erro a escrever comando: " + e.getMessage());
         }
     }
 
     public synchronized void reproduzir(String caminhoFicheiro) {
         if (reproduzir) {
-            dados.getGui().print("Gravador: já está a reproduzir");
+            dados.getGuiGravador().print("Gravador: já está a reproduzir");
             return;
         }
 
         if (caminhoFicheiro == null || caminhoFicheiro.trim().isEmpty()) {
-            dados.getGui().print("Gravador: caminho do ficheiro inválido");
+            dados.getGuiGravador().print("Gravador: caminho do ficheiro inválido");
             return;
         }
 
@@ -160,19 +160,19 @@ public class Gravador extends Tarefa {
 
         // tratamento de erros
         if (!dados.isOnOff()) {
-            dados.getGui().print("Gravador: ligue o robot primeiro");
+            dados.getGuiGravador().print("Gravador: ligue o robot primeiro");
             reproduzir = false;
             estado = Estados.DORMIR;
             return;
         }
 
-        dados.getGui().print("Gravador: iniciar reprodução de " + caminhoReproduzir);
+        dados.getGuiGravador().print("Gravador: iniciar reprodução de " + caminhoReproduzir);
 
         try (InputStream is = new FileInputStream(caminhoReproduzir);
              Reader ir = new InputStreamReader(is, "UTF-8");
              BufferedReader br = new BufferedReader(ir)) {
 
-            dados.getGui().print("Gravador: Semáforo adquirido");
+            dados.getGuiGravador().print("Gravador: Semáforo adquirido");
 
             String linha;
             while ((linha = br.readLine()) != null && estado == Estados.TRABALHAR && reproduzir) {
@@ -184,21 +184,21 @@ public class Gravador extends Tarefa {
 
                 Comando comando = decode(linha);
                 if (comando == null) {
-                    dados.getGui().print("Gravador: linha inválida: " + linha);
+                    dados.getGuiGravador().print("Gravador: linha inválida: " + linha);
                     continue;
                 }
                 executarComando(comando);
             }
 
             // no fim parar de forma não imediata para acabar a sequência
-            dados.getGui().print("Gravador: Parar(false)");
+            dados.getGuiGravador().print("Gravador: Parar(false)");
             dados.getRobot().Parar(false);
-            dados.getGui().print("Gravador: reprodução concluída");
+            dados.getGuiGravador().print("Gravador: reprodução concluída");
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            dados.getGui().print("Gravador: reprodução interrompida");
+            dados.getGuiGravador().print("Gravador: reprodução interrompida");
         } catch (IOException e) {
-            dados.getGui().print("Gravador: erro ao ler ficheiro: " + e.getMessage());
+            dados.getGuiGravador().print("Gravador: erro ao ler ficheiro: " + e.getMessage());
         } finally {
             reproduzir = false;
             estado = Estados.DORMIR;
@@ -206,11 +206,11 @@ public class Gravador extends Tarefa {
     }
 
     private void executarComando(Comando comando) throws InterruptedException {
-        long espera = comando.executarComandos(dados.getRobot());
+        long espera = comando.executarComandos(dados.getGuiGravador().getRobotAtual());
 
-        dados.getGui().print("Gravador: " + comando.toString());
+        dados.getGuiGravador().print("Gravador: " + comando.toString());
         if (espera > 0) {
-            dados.getGui().print("Gravador: espera " + espera + " ms");
+            dados.getGuiGravador().print("Gravador: espera " + espera + " ms");
             Thread.sleep(espera);
         }
     }

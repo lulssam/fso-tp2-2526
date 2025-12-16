@@ -3,6 +3,7 @@ import java.util.ArrayList;
 public class Dados {
     private String nomeRobot;
     private GUI gui;
+    private GUI_Gravador guiGravador;
     private ArrayList<String> texto;
     private int raio, angulo, distancia;
     private boolean onOff;
@@ -12,9 +13,10 @@ public class Dados {
     private MovAleatorios movAleatorios;
     private Gravador gravador;
 
-    public Dados(GUI gui) {
+    public Dados(GUI gui, GUI_Gravador guiGravador) {
         nomeRobot = "EV8";
         this.gui = gui;
+        this.guiGravador = guiGravador;
         texto = new ArrayList<String>();
         raio = 20;
         angulo = 90;
@@ -111,13 +113,17 @@ public class Dados {
         return gravador;
     }
 
+    public GUI_Gravador getGuiGravador() {
+        return guiGravador;
+    }
+
     public void setGravador(Gravador gravador) {
         this.gravador = gravador;
     }
 
     /**
      * Método para encaminhar os comandos para o gravdor quando acionarmos o modo*/
-    public void registrarComandos(Comando c) {
+    public void registarComandos(Comando c) {
         if (gravador != null) {
             gravador.gravar(c);
         }

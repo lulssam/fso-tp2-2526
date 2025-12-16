@@ -1,9 +1,10 @@
 import javax.swing.*;
 
 // TODO 3. meter a funcionar com outro robot
-
+// TODO PERGUNTAR AO STOR PORQUE É QUE TIVEMOS 0 NA BIBLIOGRAFIA
 public class App implements Runnable {
     private GUI gui;
+    private GUI_Gravador gui_gravador;
     private Dados dados;
 
     public static void main(String[] args) {
@@ -11,10 +12,26 @@ public class App implements Runnable {
     }
 
     public void run() {
-        gui = new GUI();
-        dados = new Dados(gui);
+        gui_gravador = new GUI_Gravador(this);
+        gui = new GUI(this);
+
+        dados = new Dados(gui, gui_gravador);
+        gui_gravador.setDados(dados);
         gui.setDados(dados);
+
         gui.setVisible(true);
+    }
+
+    public GUI getGui() {
+        return gui;
+    }
+
+    public GUI_Gravador getGui_gravador() {
+        return gui_gravador;
+    }
+
+    public Dados getDados() {
+        return dados;
     }
 }
 

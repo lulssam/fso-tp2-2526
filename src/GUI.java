@@ -27,19 +27,23 @@ public class GUI extends JFrame {
     private JSpinner numSpinner;
     private JRadioButton movAleatoriosRadioBtn;
     private JCheckBox tipoRobotChkBox;
-    private JPanel gravadorPanel;
-    private JTextField ficheiroField;
-    private JButton browseBtn;
-    private JButton gravarBtn;
-    private JButton reproduzirBtn;
     private JButton limparBtn;
     private JCheckBox imprimirChkBox;
+    private boolean robotGuiLigado;
+
+    public boolean isRobotGuiLigado() {
+        return robotGuiLigado;
+    }
+
+    public void setRobotGuiLigado(boolean robotGuiLigado) {
+        this.robotGuiLigado = robotGuiLigado;
+    }
 
     /**
      * Create the frame.
      */
-    public GUI() {
-
+    public GUI(App app) {
+        GUI_Gravador gui_gravador = app.getGui_gravador();
         // Iniciar Janela
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 470, 610);
@@ -115,6 +119,7 @@ public class GUI extends JFrame {
                 // Ligar/Desligar Robot
                 if (ligarChkBox.isSelected()) { // se selecionarmos o botão
                     dados.getRobot().OpenEV3(dados.getNomeRobot());  // se conseguirmos obter o nome do robot e ligar
+                    setRobotGuiLigado(true);
                     dados.setOnOff(true);
                     dados.getRobot().start();
                     print("Sucesso na abertura das Streams");
@@ -128,6 +133,7 @@ public class GUI extends JFrame {
                     }
                     dados.getRobot().CloseEV3();
                     dados.setOnOff(false);
+                    setRobotGuiLigado(false);
                     dados.getRobot().stop();
                     ligarChkBox.setSelected(false);
                     print("Conexão encerrada");
@@ -157,7 +163,7 @@ public class GUI extends JFrame {
         pararBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dados.getRobot().Parar(true);
-                dados.registrarComandos(new Comando(Comando.ID_PARAR, 1));
+                dados.registarComandos(new Comando(Comando.ID_PARAR, 1));
                 print("Comando enviado: Parar (imediato)");
             }
         });
@@ -250,104 +256,10 @@ public class GUI extends JFrame {
         });
         contentPane.add(movAleatoriosRadioBtn);
 
-        gravadorPanel = new JPanel();
-        gravadorPanel.setOpaque(false);
-        gravadorPanel.setBorder(BorderFactory.createTitledBorder("Gravador"));
-        gravadorPanel.setBounds(6, 190, 455, 80);
-        gravadorPanel.setLayout(null);
-        contentPane.add(gravadorPanel);
-
-        JLabel ficheiroLabel = new JLabel("Ficheiro");
-        ficheiroLabel.setBounds(10, 30, 50, 16);
-        gravadorPanel.add(ficheiroLabel);
-
-        ficheiroField = new JTextField();
-        ficheiroField.setBounds(65, 25, 300, 26);
-        gravadorPanel.add(ficheiroField);
-        ficheiroField.setColumns(10);
-
-        browseBtn = new JButton("...");
-        browseBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
-                int result = fileChooser.showOpenDialog(GUI.this);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    ficheiroField.setText(fileChooser.getSelectedFile().getAbsolutePath());
-                    print("Ficheiro selecionado: " + ficheiroField.getText());
-                }
-            }
-        });
-        browseBtn.setBounds(370, 24, 45, 29);
-        gravadorPanel.add(browseBtn);
-
-        gravarBtn = new JButton("Gravar");
-        gravarBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (!dados.isOnOff()) {
-                    print("Ligar o robot primeiro");
-                    return;
-                }
-                String caminho = ficheiroField.getText() != null ? ficheiroField.getText().trim() : "";
-                if (caminho.isEmpty()) {
-                    print("Selecione um ficheiro para gravar primeiro");
-                    return;
-                }
-
-                if (!dados.getGravador().isGravar()) {
-                    dados.getGravador().iniciarGravar(caminho);
-                    gravarBtn.setText("Parar");
-                } else {
-                    dados.getGravador().pararGravacao();
-                    gravarBtn.setText("Gravar");
-                }
-            }
-        });
-        gravarBtn.setBounds(100, 50, 117, 29);
-        gravadorPanel.add(gravarBtn);
-
-        reproduzirBtn = new JButton("Reproduzir");
-        reproduzirBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (!dados.isOnOff()) {
-                    print("Ligar o robot");
-                }
-
-                String caminho = ficheiroField.getText() != null ? ficheiroField.getText().trim() : "";
-                if (caminho.isEmpty()) {
-                    print("Selecione um ficheiro para reproduzir primeiro");
-                    return;
-                }
-
-                // se estiver a gravar, para primeiro
-                if (dados.getGravador().isGravar()) {
-                    dados.getGravador().pararGravacao();
-                    gravarBtn.setText("Gravar");
-                }
-
-                if (!dados.getGravador().isReproduzir()) {
-                    dados.getGravador().reproduzir(caminho);
-                    reproduzirBtn.setText("Parar");
-                    print("Reproduzir");
-                } else {
-                    dados.getGravador().pararReproducao();
-                    reproduzirBtn.setText("Reproduzir");
-                }
-            }
-        });
-        reproduzirBtn.setBounds(230, 50, 117, 29);
-        gravadorPanel.add(reproduzirBtn);
-
         JLabel consolaLabel = new JLabel("Consola");
         consolaLabel.setBounds(6, 280, 61, 16);
         contentPane.add(consolaLabel);
 
-        JScrollPane consolaScrollPane = new JScrollPane();
-        consolaScrollPane.setBounds(6, 300, 455, 230);
-        contentPane.add(consolaScrollPane);
-        consolaTextArea = new JTextArea();
-        DefaultCaret caret = (DefaultCaret) consolaTextArea.getCaret();
-        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-        consolaScrollPane.setViewportView(consolaTextArea);
 
 
         JRadioButton evitarRadioBtn = new JRadioButton("Evitar Obstáculos");
@@ -368,6 +280,36 @@ public class GUI extends JFrame {
             }
         });
         contentPane.add(evitarRadioBtn);
+
+        JRadioButton gravadorRadioBtn = new JRadioButton("Gravador");
+        gravadorRadioBtn.setBounds(277, 190, 182, 16);
+        gravadorRadioBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (gravadorRadioBtn.isSelected()) {
+                    if (!dados.isOnOff()) {
+                        print("Ligar robot primeiro!");
+                        gravadorRadioBtn.setSelected(false);
+                    }
+                    print("Gravador Selecionado");
+                    gui_gravador.setVisible(true);
+
+                } else {
+                    print("Gravador Desativado");
+                    gui_gravador.setVisible(false);
+                }
+            }
+        });
+        contentPane.add(gravadorRadioBtn);
+
+        JScrollPane consolaScrollPane = new JScrollPane();
+        consolaScrollPane.setBounds(6, 300, 455, 230);
+        contentPane.add(consolaScrollPane);
+        consolaTextArea = new JTextArea();
+        DefaultCaret caret = (DefaultCaret) consolaTextArea.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        consolaScrollPane.setViewportView(consolaTextArea);
+
+
 
         limparBtn = new JButton("Limpar");
         limparBtn.addActionListener(new ActionListener() {
@@ -466,13 +408,14 @@ public class GUI extends JFrame {
 
     private void frenteAction() {
         try {
+            // TODO confirmar se é preciso tirar estas entradas de semáforo já que fazemos no MyRobotSync
             dados.getRobot().entrar();
             dados.getRobot().Reta(dados.getDistancia());
-            dados.registrarComandos(new Comando(Comando.ID_RETA, dados.getDistancia()));
+            dados.registarComandos(new Comando(Comando.ID_RETA, dados.getDistancia()));
             print("Comando enviado: Frente com distância " + dados.getDistancia());
             print("Espera: " + TempoMovimento.tempoReta(dados.getDistancia()));
             // TODO confirmar com stor
-            dados.registrarComandos(new Comando(Comando.ID_PARAR, 0));
+            dados.registarComandos(new Comando(Comando.ID_PARAR, 0));
             dados.getRobot().Parar(false);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
@@ -485,10 +428,10 @@ public class GUI extends JFrame {
         try {
             dados.getRobot().entrar();
             dados.getRobot().Reta(dados.getDistancia() * -1);
-            dados.registrarComandos(new Comando(Comando.ID_RETA, dados.getDistancia() * -1));
+            dados.registarComandos(new Comando(Comando.ID_RETA, dados.getDistancia() * -1));
             print("Comando enviado: Trás com distância: " + dados.getDistancia());
             print("Espera: " + TempoMovimento.tempoReta(dados.getDistancia()));
-            dados.registrarComandos(new Comando(Comando.ID_PARAR, 0));
+            dados.registarComandos(new Comando(Comando.ID_PARAR, 0));
             dados.getRobot().Parar(false);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
@@ -501,10 +444,10 @@ public class GUI extends JFrame {
         try {
             dados.getRobot().entrar();
             dados.getRobot().CurvarDireita(dados.getRaio(), dados.getAngulo());
-            dados.registrarComandos(new Comando(Comando.ID_DIREITA, dados.getRaio(), dados.getAngulo()));
+            dados.registarComandos(new Comando(Comando.ID_DIREITA, dados.getRaio(), dados.getAngulo()));
             print("Comando enviado: Curvar à Direita com ângulo " + dados.getAngulo() + " e raio " + dados.getRaio());
             print("Espera: " + TempoMovimento.tempoCurvar(dados.getRaio(), dados.getAngulo()) + " ms");
-            dados.registrarComandos(new Comando(Comando.ID_PARAR, 0));
+            dados.registarComandos(new Comando(Comando.ID_PARAR, 0));
             dados.getRobot().Parar(false);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
@@ -517,15 +460,17 @@ public class GUI extends JFrame {
         try {
             dados.getRobot().entrar();
             dados.getRobot().CurvarEsquerda(dados.getRaio(), dados.getAngulo());
-            dados.registrarComandos(new Comando(Comando.ID_ESQUERDA, dados.getRaio(), dados.getAngulo()));
+            dados.registarComandos(new Comando(Comando.ID_ESQUERDA, dados.getRaio(), dados.getAngulo()));
             print("Comando enviado: Curvar à Esquerda com ângulo " + dados.getAngulo() + " e raio " + dados.getRaio());
             print("Espera: " + TempoMovimento.tempoCurvar(dados.getRaio(), dados.getAngulo()) + " ms");
-            dados.registrarComandos(new Comando(Comando.ID_PARAR, 0));
+            dados.registarComandos(new Comando(Comando.ID_PARAR, 0));
             dados.getRobot().Parar(false);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         } finally {
             dados.getRobot().sair();
         }
+
+
     }
 }

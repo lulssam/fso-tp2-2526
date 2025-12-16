@@ -52,7 +52,7 @@ public class EvitarObstaculos extends Tarefa {
                     // reta
                     int distancia = -20;
                     dados.getRobot().Reta(distancia);
-                    dados.registrarComandos(new Comando(Comando.ID_RETA, distancia));
+                    dados.registarComandos(new Comando(Comando.ID_RETA, distancia));
                     dados.getGui().print("Evitar Obstáculos: Reta com distância: " + distancia);
                     Thread.sleep(TempoMovimento.tempoReta(distancia));
 
@@ -62,14 +62,14 @@ public class EvitarObstaculos extends Tarefa {
                         // esquerda
                         case 0:
                             dados.getRobot().CurvarEsquerda(0, 90);
-                            dados.registrarComandos(new Comando(Comando.ID_ESQUERDA, 0, 90));
+                            dados.registarComandos(new Comando(Comando.ID_ESQUERDA, 0, 90));
                             dados.getGui().print("Evitar Obstáculos: Curva Esquerda com raio: 0, e angulo: 90º. ");
                             Thread.sleep(TempoMovimento.tempoCurvar(0, 90));
 
                             break;
                         case 1:
                             dados.getRobot().CurvarDireita(0, 90);
-                            dados.registrarComandos(new Comando(Comando.ID_DIREITA, 0, 90));
+                            dados.registarComandos(new Comando(Comando.ID_DIREITA, 0, 90));
                             dados.getGui().print("Evitar Obstáculos: Curva Direita com raio: 0, e angulo: 90º. ");
                             Thread.sleep(TempoMovimento.tempoCurvar(0, 90));
 
