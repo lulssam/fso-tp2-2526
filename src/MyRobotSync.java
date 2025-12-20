@@ -1,4 +1,4 @@
-import java.util. concurrent. Semaphore;
+import java.util.concurrent.Semaphore;
 
 public class MyRobotSync implements IRobotLegoEV3 {
     private Semaphore acesso;
@@ -17,7 +17,7 @@ public class MyRobotSync implements IRobotLegoEV3 {
 
     @Override
     public void CloseEV3() {
-        robot. CloseEV3();
+        robot.CloseEV3();
     }
 
     @Override
@@ -50,7 +50,7 @@ public class MyRobotSync implements IRobotLegoEV3 {
     }
 
     public void setRobot(IRobotLegoEV3 robot) {
-        this.robot. setRobot(robot);
+        this.robot.setRobot(robot);
     }
 
     public void entrar() throws InterruptedException {

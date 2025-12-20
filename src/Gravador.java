@@ -70,10 +70,11 @@ public class Gravador extends Tarefa {
         estado = Estados.DORMIR;
         this.interrupt();
         try {
-            dados.getRobot().Parar(true);
+            dados.getRobot().Parar(false);
         } catch (Exception ignore) {
         }
         dados.getGuiGravador().print("Gravador: reproduzir parado");
+        dados.getGuiGravador().resetBotaoReprod();
     }
 
     public synchronized void gravar(Comando comando) {
@@ -151,7 +152,7 @@ public class Gravador extends Tarefa {
 
 
     @Override
-    void trabalharAtividade() throws InterruptedException {
+    void trabalharAtividade(){
         // executar SÓ se estiver em modo de reprodução
         if (!reproduzir) {
             estado = Estados.DORMIR;
@@ -195,23 +196,28 @@ public class Gravador extends Tarefa {
             dados.getRobot().Parar(false);
             dados.getGuiGravador().print("Gravador: reprodução concluída");
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            estado = Estados.DORMIR;
             dados.getGuiGravador().print("Gravador: reprodução interrompida");
         } catch (IOException e) {
             dados.getGuiGravador().print("Gravador: erro ao ler ficheiro: " + e.getMessage());
         } finally {
             reproduzir = false;
             estado = Estados.DORMIR;
+            dados.getGuiGravador().resetBotaoReprod();
         }
     }
 
-    private void executarComando(Comando comando) throws InterruptedException {
+    private void executarComando(Comando comando) {
         long espera = comando.executarComandos(dados.getGuiGravador().getRobotAtual());
 
         dados.getGuiGravador().print("Gravador: " + comando.toString());
         if (espera > 0) {
             dados.getGuiGravador().print("Gravador: espera " + espera + " ms");
-            Thread.sleep(espera);
+            try {
+                Thread.sleep(espera);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

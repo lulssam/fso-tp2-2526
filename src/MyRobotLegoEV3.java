@@ -10,12 +10,15 @@ public class MyRobotLegoEV3 extends Thread implements IRobotLegoEV3 {
     private static int TEMPO_COMUNICACAO = 100;
     private BufferCircularComando buffer;
     private IRobotLegoEV3 robot;
-    private volatile boolean stopRequested = false;
+    private volatile boolean stopRequested;
     private Semaphore semaphore;
+    private int comandoAtual;
 
     public MyRobotLegoEV3() {
-        robot = new CRobotLegoEV3();
+        robot = new RobotSimulado();
         buffer = new BufferCircularComando();
+        comandoAtual = 0;
+        stopRequested = false;
     }
 
     public static double getVelRobot() {
@@ -67,11 +70,10 @@ public class MyRobotLegoEV3 extends Thread implements IRobotLegoEV3 {
     }
 
     private void pararImediatamente() {
-        if (stopRequested || Thread.currentThread().isInterrupted()) {
+        if (stopRequested) {
             robot.Parar(true);
             buffer.limparBuffer();
             stopRequested = false;
-            Thread.interrupted();
         }
     }
 

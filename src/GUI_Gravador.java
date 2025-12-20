@@ -48,6 +48,7 @@ public class GUI_Gravador extends JFrame {
         // Iniciar Janela
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 470, 610);
+        setTitle("GUI Gravador");
         contentPane = new JPanel();
         contentPane.setBackground(new Color(254, 255, 255));
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -360,6 +361,7 @@ public class GUI_Gravador extends JFrame {
                     print("Reproduzir");
                 } else {
                     dados.getGravador().pararReproducao();
+                    dados.getRobot().Parar(false);
                     reproduzirBtn.setText("Reproduzir");
                 }
             }
@@ -399,49 +401,6 @@ public class GUI_Gravador extends JFrame {
         });
         imprimirChkBox.setBounds(250, 542, 100, 23);
         contentPane.add(imprimirChkBox);
-
-        // se fecharmos a janela o robot TEM que parar
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                try {
-                    if (dados != null) {
-                        try {
-                            dados.getRobot().Parar(true);
-                        } catch (Exception ignore) {
-                        }
-                        try {
-                            dados.getRobot().stop();
-                        } catch (Exception ignore) {
-                        }
-                        try {
-                            dados.getRobot().CloseEV3();
-                        } catch (Exception igore) {
-
-                        }
-                        try {
-                            dados.getMovAleatorios().desativar();
-                            dados.getMovAleatorios().interrupt();
-                        } catch (Exception ignore) {
-                        }
-                        try {
-                            dados.getEvitarObstaculos().desativar();
-                            dados.getEvitarObstaculos().interrupt();
-                        } catch (Exception ignore) {
-
-                        }
-                        try {
-                            dados.getGravador().desativar();
-                            dados.getGravador().interrupt();
-                        } catch (Exception ignore) {
-                        }
-                    }
-                } finally {
-                    System.exit(0);
-                }
-            }
-        });
     }
 
     public void setDados(Dados dados) {
@@ -572,5 +531,9 @@ public class GUI_Gravador extends JFrame {
 
     private boolean isPartilhado(){
         return nomeAtual.equals(dados.getNomeRobot());
+    }
+
+    public void resetBotaoReprod() {
+        SwingUtilities.invokeLater(() -> reproduzirBtn.setText("Reproduzir"));
     }
 }

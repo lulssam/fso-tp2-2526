@@ -43,10 +43,12 @@ public class GUI extends JFrame {
      * Create the frame.
      */
     public GUI(App app) {
+
         GUI_Gravador gui_gravador = app.getGui_gravador();
         // Iniciar Janela
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 470, 610);
+        setTitle("GUI Principal");
         contentPane = new JPanel();
         contentPane.setBackground(new Color(254, 255, 255));
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -134,7 +136,7 @@ public class GUI extends JFrame {
                     dados.getRobot().CloseEV3();
                     dados.setOnOff(false);
                     setRobotGuiLigado(false);
-                    dados.getRobot().stop();
+                    //dados.getRobot().stop();
                     ligarChkBox.setSelected(false);
                     print("Conexão encerrada");
                 }
@@ -251,6 +253,7 @@ public class GUI extends JFrame {
                 } else {
                     print("Movimentos Aleatórios Desativado");
                     dados.getMovAleatorios().desativar();
+                    dados.getRobot().Parar(false);
                 }
             }
         });
@@ -289,9 +292,11 @@ public class GUI extends JFrame {
                     if (!dados.isOnOff()) {
                         print("Ligar robot primeiro!");
                         gravadorRadioBtn.setSelected(false);
-                    }
+                    } else {
+
                     print("Gravador Selecionado");
                     gui_gravador.setVisible(true);
+                    }
 
                 } else {
                     print("Gravador Desativado");
@@ -331,50 +336,6 @@ public class GUI extends JFrame {
         });
         imprimirChkBox.setBounds(250, 542, 100, 23);
         contentPane.add(imprimirChkBox);
-
-        // se fecharmos a janela o robot TEM que parar
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                try {
-                    if (dados != null) {
-                        try {
-                            dados.getRobot().Parar(true);
-                        } catch (Exception ignore) {
-                        }
-                        try {
-                            dados.getRobot().stop();
-                        } catch (Exception ignore) {
-                        }
-                        try {
-                            dados.getRobot().CloseEV3();
-                        } catch (Exception igore) {
-
-                        }
-                        try {
-                            dados.getMovAleatorios().desativar();
-                            dados.getMovAleatorios().interrupt();
-                        } catch (Exception ignore) {
-                        }
-                        try {
-                            dados.getEvitarObstaculos().desativar();
-                            dados.getEvitarObstaculos().interrupt();
-                        } catch (Exception ignore) {
-
-                        }
-                        try {
-                            dados.getGravador().desativar();
-                            dados.getGravador().interrupt();
-                        } catch (Exception ignore) {
-
-                        }
-                    }
-                } finally {
-                    System.exit(0);
-                }
-            }
-        });
 
         setVisible(true);
     }
@@ -418,7 +379,7 @@ public class GUI extends JFrame {
             dados.registarComandos(new Comando(Comando.ID_PARAR, 0));
             dados.getRobot().Parar(false);
         } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
+            ex.printStackTrace();
         } finally {
             dados.getRobot().sair();
         }
@@ -434,7 +395,7 @@ public class GUI extends JFrame {
             dados.registarComandos(new Comando(Comando.ID_PARAR, 0));
             dados.getRobot().Parar(false);
         } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
+            ex.printStackTrace();
         } finally {
             dados.getRobot().sair();
         }
@@ -450,7 +411,7 @@ public class GUI extends JFrame {
             dados.registarComandos(new Comando(Comando.ID_PARAR, 0));
             dados.getRobot().Parar(false);
         } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
+            ex.printStackTrace();
         } finally {
             dados.getRobot().sair();
         }
@@ -466,7 +427,7 @@ public class GUI extends JFrame {
             dados.registarComandos(new Comando(Comando.ID_PARAR, 0));
             dados.getRobot().Parar(false);
         } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
+            ex.printStackTrace();
         } finally {
             dados.getRobot().sair();
         }

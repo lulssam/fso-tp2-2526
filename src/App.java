@@ -1,7 +1,4 @@
 import javax.swing.*;
-
-// TODO 3. meter a funcionar com outro robot
-// TODO PERGUNTAR AO STOR PORQUE É QUE TIVEMOS 0 NA BIBLIOGRAFIA
 public class App implements Runnable {
     private GUI gui;
     private GUI_Gravador gui_gravador;
@@ -18,7 +15,6 @@ public class App implements Runnable {
         dados = new Dados(gui, gui_gravador);
         gui_gravador.setDados(dados);
         gui.setDados(dados);
-
         gui.setVisible(true);
     }
 

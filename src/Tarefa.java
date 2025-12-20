@@ -36,18 +36,20 @@ public abstract class Tarefa extends Thread {
                     try {
                         dormir();
                     } catch (InterruptedException e) {
-
+                        e.printStackTrace();
                     }
                     break;
                 case TRABALHAR:
                     try {
                         trabalharAtividade();
                     } catch (InterruptedException e){
-
+                        e.printStackTrace();
                     }
+
                     break;
                 case TERMINAR:
                     desativar();
+
                     break;
             }
         }

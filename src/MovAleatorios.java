@@ -102,6 +102,8 @@ public class MovAleatorios extends Tarefa {
         if (!interrompido) {
         //dados.getRobot().Parar(false);
         dados.getGui().print("Movimentos Aleatorios: lote concluído.");
+        dados.getRobot().Parar(false);
+        Thread.sleep(3000);
 
         } else {
             dados.getGui().print("Movimentos Aleatorios: lote interrompido");
@@ -111,7 +113,9 @@ public class MovAleatorios extends Tarefa {
         }
 
         dados.getGui().print("Movimentos Aleatorios: desativado.");
+
     }
+
 
     private int randoms(int min, int max) {
         return random.nextInt((max - min) + 1) + min;
