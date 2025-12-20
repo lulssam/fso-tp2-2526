@@ -195,9 +195,6 @@ public class Gravador extends Tarefa {
             dados.getGuiGravador().print("Gravador: Parar(false)");
             dados.getRobot().Parar(false);
             dados.getGuiGravador().print("Gravador: reprodução concluída");
-        } catch (InterruptedException e) {
-            estado = Estados.DORMIR;
-            dados.getGuiGravador().print("Gravador: reprodução interrompida");
         } catch (IOException e) {
             dados.getGuiGravador().print("Gravador: erro ao ler ficheiro: " + e.getMessage());
         } finally {

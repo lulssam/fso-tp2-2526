@@ -1,4 +1,5 @@
 import javax.swing.*;
+
 public class App implements Runnable {
     private GUI gui;
     private GUI_Gravador gui_gravador;
@@ -18,16 +19,8 @@ public class App implements Runnable {
         gui.setVisible(true);
     }
 
-    public GUI getGui() {
-        return gui;
-    }
-
     public GUI_Gravador getGui_gravador() {
         return gui_gravador;
-    }
-
-    public Dados getDados() {
-        return dados;
     }
 }
 

@@ -4,7 +4,7 @@ import java.util.concurrent.Semaphore;
  * Classe servidor do RobotLegoEV3
  * CONSUMIDOR!!
  */
-public class MyRobotLegoEV3 extends Thread implements IRobotLegoEV3 {
+public class MyRobotLegoEV3 extends Tarefa implements IRobotLegoEV3 {
 
     private static double VEL_ROBOT = 0.02; // read only, fundamental para esperar o tempo
     private static int TEMPO_COMUNICACAO = 100;
@@ -12,21 +12,69 @@ public class MyRobotLegoEV3 extends Thread implements IRobotLegoEV3 {
     private IRobotLegoEV3 robot;
     private volatile boolean stopRequested;
     private Semaphore semaphore;
-    private int comandoAtual;
+
 
     public MyRobotLegoEV3() {
+        super();
         robot = new RobotSimulado();
         buffer = new BufferCircularComando();
-        comandoAtual = 0;
         stopRequested = false;
+
     }
 
-    public static double getVelRobot() {
-        return VEL_ROBOT;
+    @Override
+    void trabalharAtividade() {
+        Comando comando = buffer.removerElemento();
+
+        if (comando == null) return;
+
+        stopRequested = false;
+        long tempoEspera = 0;
+
+        switch (comando.getIdentificador()) {
+            case Comando.ID_RETA:
+                int d = comando.getArg1();
+                robot.Reta(d);
+                tempoEspera = TempoMovimento.tempoReta(d);
+                break;
+            case Comando.ID_DIREITA:
+                int raioD = comando.getArg1();
+                int anguloD = comando.getArg2();
+                robot.CurvarDireita(raioD, anguloD);
+                tempoEspera = TempoMovimento.tempoCurvar(raioD, anguloD);
+                break;
+            case Comando.ID_ESQUERDA:
+                int raioE = comando.getArg1();
+                int anguloE = comando.getArg2();
+                robot.CurvarEsquerda(raioE, anguloE);
+                tempoEspera = TempoMovimento.tempoCurvar(raioE, anguloE);
+                break;
+            case Comando.ID_PARAR:
+                robot.Parar(true);
+                tempoEspera = TEMPO_COMUNICACAO;
+                break;
+
+        }
+
+        if (tempoEspera > 0) {
+            espera(tempoEspera);
+        }
     }
 
-    public static int getTempoComunicacao() {
-        return TEMPO_COMUNICACAO;
+    private void espera(long tempoTotal) {
+        long tempoDecorrido = 0;
+        int parte = 10; // verificação a cada 10ms
+
+        while (tempoDecorrido < tempoTotal) {
+            if (stopRequested || estado != Estados.TRABALHAR) break;
+            try {
+                Thread.sleep(parte);
+            } catch (InterruptedException e) {
+                break;
+            }
+            tempoDecorrido += parte;
+        }
+
     }
 
     public void Reta(int distancia) {
@@ -48,8 +96,8 @@ public class MyRobotLegoEV3 extends Thread implements IRobotLegoEV3 {
     public void Parar(boolean parar) {
         if (parar) {
             stopRequested = true;
-            this.interrupt();
             buffer.limparBuffer();
+            robot.Parar(true);
         } else {
             Comando c = new Comando(Comando.ID_PARAR, 0);
             buffer.inserirElemento(c);
@@ -69,14 +117,6 @@ public class MyRobotLegoEV3 extends Thread implements IRobotLegoEV3 {
         robot.CloseEV3();
     }
 
-    private void pararImediatamente() {
-        if (stopRequested) {
-            robot.Parar(true);
-            buffer.limparBuffer();
-            stopRequested = false;
-        }
-    }
-
     public void setSemaphore(Semaphore s) {
         this.semaphore = s;
     }
@@ -85,7 +125,7 @@ public class MyRobotLegoEV3 extends Thread implements IRobotLegoEV3 {
      * Ler do comando, enviar para o robot, e esperar pelo tempo de execução de forma
      * interrompível para permitir PARAR imediato.
      */
-    public void run() {
+    /*public void run() {
         while (!Thread.currentThread().isInterrupted()) {
             Comando comando = buffer.removerElemento();
             if (comando == null) {
@@ -116,7 +156,7 @@ public class MyRobotLegoEV3 extends Thread implements IRobotLegoEV3 {
             if (semaphore != null) semaphore.release();
         }
     }
-
+*/
     public IRobotLegoEV3 getRobot() {
         return robot;
     }
