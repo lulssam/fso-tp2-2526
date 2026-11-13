@@ -16,12 +16,13 @@ public class Gravador extends Tarefa {
     private Writer writer;
 
     // reprodução
-    private volatile boolean reproduzir = false;
+    private volatile boolean reproduzir;
     private String caminhoReproduzir;
 
     public Gravador(Dados dados) {
         this.dados = dados;
         gravar = false;
+        reproduzir = false;
     }
 
     public synchronized boolean isGravar() {
@@ -152,7 +153,7 @@ public class Gravador extends Tarefa {
 
 
     @Override
-    void trabalharAtividade(){
+    void trabalharAtividade() {
         // executar SÓ se estiver em modo de reprodução
         if (!reproduzir) {
             estado = Estados.DORMIR;
@@ -167,6 +168,7 @@ public class Gravador extends Tarefa {
             return;
         }
 
+        // REPRODUÇÃO
         dados.getGuiGravador().print("Gravador: iniciar reprodução de " + caminhoReproduzir);
 
         try (InputStream is = new FileInputStream(caminhoReproduzir);

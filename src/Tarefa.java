@@ -45,11 +45,9 @@ public abstract class Tarefa extends Thread {
                     } catch (InterruptedException e){
                         e.printStackTrace();
                     }
-
                     break;
                 case TERMINAR:
                     desativar();
-
                     break;
             }
         }
